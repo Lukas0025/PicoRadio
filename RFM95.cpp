@@ -241,6 +241,7 @@ namespace PicoRadio {
 
     // Wait for RxDone or RxTimeout
     uint8_t irqFlags = 0;
+    this->RXDelay    = 0;
     for (uint16_t i = 0; (i < 2000) && !(irqFlags & 0xC0); i++) { // max 16s
 
       irqFlags = this->read(RFM_REG_IRQ_FLAGS);
@@ -249,6 +250,8 @@ namespace PicoRadio {
         this->init();  // reset radio
         return PICORADIO_ERROR_RX_TIMEOUT;
       }
+
+      if (i % 125 == 124) this->RXDelay += 1;
 
       delay(1); // wait 8ms
     }
@@ -283,5 +286,19 @@ namespace PicoRadio {
     }
 
     return PICORADIO_ERROR_UNKNOWN;
+  }
+
+  bool RFM95::RWTest() {
+    this->write(RFM_REG_OP_MODE, 0x81);
+    if (this->read(RFM_REG_OP_MODE) != 0x81) return false;
+
+    this->write(RFM_REG_MODEM_CONFIG_2, 0xC4); //SF 
+    this->write(RFM_REG_MODEM_CONFIG_1, 0x72); //BW
+    this->write(RFM_REG_MODEM_CONFIG_3, 0x0C); 
+    if (this->read(RFM_REG_MODEM_CONFIG_2) != 0xC4) return false;
+    if (this->read(RFM_REG_MODEM_CONFIG_1) != 0x72) return false;
+    if (this->read(RFM_REG_MODEM_CONFIG_3) != 0x0C) return false;
+
+    return true;
   }
 }

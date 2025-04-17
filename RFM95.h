@@ -90,6 +90,11 @@ namespace PicoRadio {
        */
       int8_t receive(uint8_t *packet, uint8_t maxLength);
 
+      /**
+        * Perform read write test to test rfm module
+        */
+      bool RWTest();
+
     private:
 
       /**

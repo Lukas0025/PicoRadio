@@ -2,7 +2,7 @@
 
 #pragma once
 
-#define PICO_RADIO_SAFTY
+//#define PICO_RADIO_SAFTY
 //#define PICO_RADIO_SYNCWORD 0x34
 //#define PICO_RADIO_SEND_IQ_INVERT
 //#define PICO_RADIO_RECV_IQ_INVERT
@@ -55,6 +55,11 @@ namespace PicoRadio {
             int8_t lastSnr;
 
             /**
+             * time used for last RX job
+             */
+            uint8_t RXDelay;
+
+            /**
              * Inicialize radio module
              */
             virtual void init() = 0;
@@ -87,6 +92,11 @@ namespace PicoRadio {
              * @param rates pointer to rates table
              */
             void setTables(uint8_t* freqs, uint8_t* rates);
+
+            /**
+             * Perform read write test to test radio module
+             */
+            virtual bool RWTest() = 0;
 
             /**
              * Descructor of module
